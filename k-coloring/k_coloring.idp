@@ -1,0 +1,119 @@
+procedure main(){
+    setOptions()
+    runMinimize(S)
+    //runLocalSearch(S)
+}
+
+procedure setOptions(){
+    stdoptions.cpsupport=true
+    stdoptions.xsb=true
+    stdoptions.timeout=300
+    //stdoptions.mxtimeout=20
+    //stdoptions.timeout_localsearch=400
+    stdoptions.verbosity.solving=1
+}
+
+procedure runLocalSearch(S){
+    stdoptions.timeout_localsearch=100
+    stdoptions.verbosity.localsearch=1
+    stdoptions.localsearchtype="firstimprove"
+    results = localsearch(Tproblem,S, "swap")
+    
+    //print(results[1])
+    //print(query(objVal,results[1]))
+}
+
+procedure runMinimize(S){
+    local start_time = os.clock()
+    result= minimize(Tproblem,S,Obj)[1]
+    local running_time = os.clock()-start_time
+    print(query(objVal,result))
+    //print(query(SolValue,result))
+    print (running_time)
+}
+
+//~~~~~~~~~~~~~~modelling part~~~~~~~~~~~~~~~~~~~~~~~~
+
+vocabulary Vproblem{
+    type intrange isa int
+    type Vertex
+    type Color
+    Edge(Vertex,Vertex)
+    dec_Coloring(Vertex):Color
+    violations: intrange
+}
+
+theory Tproblem:Vproblem{
+    violations = #{x y: Edge(x,y) & dec_Coloring(x)=dec_Coloring(y)}.
+}
+
+vocabulary Vmove{
+    extern type Vproblem::Vertex
+    extern type Vproblem::Color
+    C: Color
+    V: Vertex
+}
+
+vocabulary Vmoves{
+    extern vocabulary Vproblem
+    possiblemove(Color, Vertex)
+}
+
+vocabulary VdelObj{
+    extern vocabulary Vproblem
+    extern vocabulary Vmove
+    delObj():intrange
+}
+vocabulary Vnext{
+    extern vocabulary Vproblem
+    extern vocabulary Vmove
+    next_dec_Coloring(Vertex): Color
+}
+
+
+theory Tnext: Vnext{
+    {
+        next_dec_Coloring(V) = C <- true.
+        next_dec_Coloring(x) = dec_Coloring(x) <- x ~= V.
+    }
+}
+
+query getpossibleMoves:Vproblem{
+    {c v:c ~= dec_Coloring(v)}
+}
+
+query queryGetDelObj:Vnext{
+    {
+        delObj: delObj = #{y: (Edge(V,y) | Edge(y, V)) & dec_Coloring(y) = C}
+    					- #{y: (Edge(V,y) | Edge(y, V)) & dec_Coloring(y) = dec_Coloring(V)} 
+    }
+}
+
+term Obj:Vproblem{
+    violations
+}
+
+query objVal:Vproblem{
+    {o: o=violations }
+}
+query SolValue:Vproblem{
+    {x y: dec_Coloring(x)=y}
+}
+
+
+structure Simple:Vproblem{
+	Color={c1;c2;}
+    Edge = {
+        1,2; 1,6;
+        2,3; 2,7;
+        3,4; 3,8;
+        4,5; 5,9;
+        5,1; 5,10;
+        6,8;
+        7,9;
+        8,10;
+        9,6;
+        10,7;
+    }
+    intrange = {-100..100}
+}

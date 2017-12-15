@@ -1,0 +1,65 @@
+procedure main(){
+    stdoptions.xsb=true    
+    stdoptions.cpsupport=true
+    stdoptions.verbosity.solving = 0
+    //result = modelexpand(Tproblem, smallS)[1]
+    result = minimize(Tproblem, smallS, Obj)[1]
+    print("best obj: ", query(objVal, result))
+    print(result)
+}
+
+vocabulary Vproblem{
+    type Distance isa int
+    type nbCity isa int
+    type Node
+    
+    Distance(Node, Node): Distance
+    Path(Node, Node)
+    Reachable(Node)
+}
+
+theory Tproblem:Vproblem{
+    !x: ?1y: Path(x,y).
+    !x: ?1y: Path(y,x).
+    
+    !x: ~Path(x,x).
+    !x: Reachable(x).
+    {
+        Reachable(MIN[:Node]).
+        Reachable(x) <- ?y: Reachable(y) & Path(y,x).
+    }
+}
+
+term Obj:Vproblem{
+    sum{x y: Path(x,y): Distance(x,y)}
+}
+
+query objVal:Vproblem{
+    {obj: obj = sum{x y: Path(x,y): Distance(x,y)}}
+}
+
+structure smallS:Vproblem{
+    Distance = {A, A, 0; A, B, 1; A, C, 15; A, D, 8; A,E,1; A, F, 3; A, G, 5;
+    			B, A, 1; B, B, 0; B, C, 9; B, D, 7; B, E,19; B, F, 3; B, G, 1;
+    			C, A, 6; C, B, 9; C, C, 0; C, D, 10; C, E, 10; C, F, 2; C, G, 3;
+    			D, A, 9; D, B, 7; D, C, 10; D, D, 0; D, E, 12; D, F, 6; D, G, 6;
+    			E, A, 1; E, B, 2; E, C, 10; E, D, 12; E, E, 0; E, F, 8; E, G, 2;
+    			F, A, 1; F, B, 3; F, C, 8; F, D, 6; F, E, 9; F, F, 0; F, G, 9;
+    			G, A, 2; G, B, 2; G, C, 12; G, D, 7; G, E, 3; G, F, 8; G, G, 0;}
+}
+
+structure bigS:Vproblem{
+Distance={
+0,0,1; 0,1,257; 0,2,187; 0,3,91; 0,4,150; 0,5,80; 0,6,130; 0,7,134; 0,8,243; 0,9,185; 0,10,214; 
+1,0,257; 1,1,1; 1,2,196; 1,3,228; 1,4,112; 1,5,196; 1,6,167; 1,7,154; 1,8,209; 1,9,86; 1,10,223;
+2,0,187; 2,1,196; 2,2,1; 2,3,158; 2,4,96; 2,5,88; 2,6,59; 2,7,63; 2,8,286; 2,9,124; 2,10,49; 
+3,0,91; 3,1,228; 3,2,158; 3,3,1; 3,4,120; 3,5,77; 3,6,101; 3,7,105; 3,8,159; 3,9,156; 3,10,185; 
+4,0,150; 4,1,112; 4,2,96; 4,3,120; 4,4,1; 4,5,63; 4,6,56; 4,7,34; 4,8,190; 4,9,40; 4,10,123;  
+5,0,80; 5,1,196; 5,2,88; 5,3,77; 5,4,63; 5,5,1; 5,6,25; 5,7,29; 5,8,216; 5,9,124; 5,10,115; 
+6,0,130; 6,1,167; 6,2,59; 6,3,101; 6,4,56; 6,5,25; 6,6,1; 6,7,22; 6,8,229; 6,9,95; 6,10,86; 
+7,0,134; 7,1,154; 7,2,63; 7,3,105; 7,4,34; 7,5,29; 7,6,22; 7,7,1; 7,8,225; 7,9,82; 7,10,90;  
+8,0,243; 8,1,209; 8,2,286; 8,3,159; 8,4,190; 8,5,216; 8,6,229; 8,7,225; 8,8,1; 8,9,207; 8,10,313; 
+9,0,185; 9,1,86; 9,2,124; 9,3,156; 9,4,40; 9,5,124; 9,6,95; 9,7,82; 9,8,207; 9,9,1; 9,10,151; 
+10,0,214; 10,1,223; 10,2,49; 10,3,185; 10,4,123; 10,5,115; 10,6,86; 10,7,90; 10,8,313; 10,9,151; 10,10,1;  
+}
+}

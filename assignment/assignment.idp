@@ -1,0 +1,80 @@
+procedure main(){
+    runlocalsearch(Simple)
+}
+
+procedure runlocalsearch(S){
+    stdoptions.cpsupport=true
+    stdoptions.xsb=true
+    stdoptions.timeout_localsearch=30
+    stdoptions.verbosity.localsearch=1
+    stdoptions.localsearchtype ="bestimprove"	//firstimprove, bestimprove
+    results = localsearch(Tproblem, S, "2swap")
+    print(results[1])
+    print(query(objVal,results[1]))
+}
+
+//~~~~~~~~~~~~~~modelling part~~~~~~~~~~~~~~~~~~~~~~~~
+
+vocabulary Vproblem{
+    type N isa nat
+    type Agent
+    type Task
+    Cost(Agent,Task):N
+    dec_Assignment(Agent):Task
+}
+
+theory Tproblem:Vproblem{
+    !t: ?a: dec_Assignment(a)=t.
+}
+
+vocabulary Vmove{
+    extern type Vproblem::Agent
+    A: Agent
+    B: Agent
+}
+
+vocabulary Vnext{
+    extern vocabulary Vproblem
+    extern vocabulary Vmove
+    next_dec_Assignment(Agent): Task
+}
+
+theory Tnext:Vnext{
+    {
+        next_dec_Assignment(A) = dec_Assignment(B).
+        next_dec_Assignment(B) = dec_Assignment(A).
+        next_dec_Assignment(x) = dec_Assignment(x) <- x ~= A & x ~= B.
+    }
+}
+
+query getpossibleMoves:Vproblem{
+    {a[Agent] b[Agent]: a > b 
+	}
+}
+
+query queryGetDelObj:Vnext{
+    {
+        delObj: delObj = Cost(A, dec_Assignment(B)) + Cost(B, dec_Assignment(A)) - Cost(A, dec_Assignment(A)) - Cost(B, dec_Assignment(B))
+    }
+}
+
+term Obj:Vproblem{
+    sum{t a: dec_Assignment(a)=t : Cost(a,t)}
+}
+query objVal:Vproblem{
+    {x: x=sum{t a: dec_Assignment(a)=t : Cost(a,t)} }
+}
+query solValue:Vproblem{
+    {x y: dec_Assignment(x)=y}
+}
+
+structure Simple:Vproblem{
+    Cost={
+        a,aa,5; a,bb,4; a,cc,2; a,dd,3; a,ee,6; a,ff,9;
+        b,aa,10; b,bb,3; b,cc,5; b,dd,8; b,ee,4; b,ff,7;
+        c,aa,11; c,bb,10; c,cc,5; c,dd,10; c,ee,3; c,ff,3;
+        d,aa,3; d,bb,6; d,cc,8; d,dd,11; d,ee,8; d,ff,11;
+        e,aa,9; e,bb,2; e,cc,1; e,dd,4; e,ee,2; e,ff,1;
+        f,aa,7; f,bb,8; f,cc,2; f,dd,3; f,ee,14; f,ff,5;
+    }
+}

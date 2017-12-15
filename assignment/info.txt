@@ -1,0 +1,3 @@
+Name: Assignment Problem
+Complexity: Polynomial
+Instances: Hand-made, with the ith instance containing i agents and i tasks, and a cost function mapping each agent and task to some integer \in [1..i]

@@ -1,0 +1,3 @@
+Name: Chromatic Number (Graph Colouring)
+Complexity: NP-hard
+Instances: http://mat.gsia.cmu.edu/COLOR/instances.html
