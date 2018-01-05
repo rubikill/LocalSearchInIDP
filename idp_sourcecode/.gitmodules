@@ -1,0 +1,15 @@
+[submodule "lib/minisatid"]
+	path = lib/minisatid
+	url = git@bitbucket.org:krr/minisatid.git
+[submodule "lib/lua"]
+	path = lib/lua
+	url = git@bitbucket.org:krr/autotoolized-lua.git
+[submodule "lib/interactiveShell"]
+	path = lib/interactiveShell
+	url = git@bitbucket.org:krr/linenoise.git
+[submodule "docs/official/idp-latex"]
+	path = docs/official/idp-latex
+	url = git@bitbucket.org:krr/idp-latex.git
+[submodule "cmake/UseLATEX"]
+	path = cmake/UseLATEX
+	url = https://github.com/kmorel/UseLATEX.git

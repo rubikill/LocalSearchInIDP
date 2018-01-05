@@ -1,5 +1,7 @@
 # IDP solver with local search support
-The repository consists of 4 folders. The folder _idpsourcecode_ includes the solver source code. 
+The repository consists of 5 folders. 
+Folder _idp\_sourcecode_ includes the solver source code. 
+Folder _idp\_binary_ includes the binary. 
 The remaining three folders contain executable modelling files (.idp) and instances of three combinatorial optimization problems: 
 
 - The Travelling Salesman Problem (TSP) consists of finding a shortest Hamiltonian cycle in a complete weighted graph.
